@@ -144,7 +144,7 @@ video.addEventListener('play', async () => {
 			});
 		} else {
 			$('video').css("border","5px solid red");
-			$("#status").html(`Not Verified`);
+			$("#status").html(`Unknown Person`);
 			setTimeout(function(){
 				$('video').css("border","none");
 				$("#status").html(``);
