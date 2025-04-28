@@ -1,0 +1,41 @@
+body{
+    overflow: hidden;
+    margin: 0 auto;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+header{
+    text-align: center;
+    padding: 10px;
+    font-size: 1.5rem;
+    background-color: rgb(30, 1, 45);
+    color:white;
+}
+.menu{
+    text-align: center;
+}
+.menu span{
+    padding: 5px;
+    display: inline-block;
+    background-color: rgba(128, 0, 128, 0.8);
+    cursor: pointer;
+}
+.container{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    height: 400px;
+}
+#list{
+    width:35%;
+}
+#list table{
+    width:100%;
+    border-collapse: collapse;
+    margin-left: 20px;
+}
+#list table td, #list table th{
+    border: 1px solid gray;
+}
+#videoConsole{
+    width:60%;
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Register Face</title>
+  <link rel="stylesheet" href="index.css">
+  <style>
+    #video{
+      width:400px;
+      height:400px;
+      margin: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <header>Smart Attendance System</header>
+  <div class="menu">
+    <span onclick="navigateToPage('/')">Attendance List</span>
+    <span onclick="navigateToPage('/register.html')">Register New Attendee</span>
+  </div>
+  <h2>Register User</h2>
+
+  <video id="video" autoplay muted></video>
+  <input type="text" id="name" placeholder="Enter your name" required />
+  <button onclick="captureAndRegister()">Register</button>
+  <canvas id="canvas" style="display:none;"></canvas>
+
+  <script>
+    const video = document.getElementById('video');
+    navigator.mediaDevices.getUserMedia({ video: {} })
+      .then(stream => video.srcObject = stream);
+
+    function captureAndRegister() {
+      const name = document.getElementById('name').value;
+      if (!name) return alert("Enter a name");
+
+      const canvas = document.getElementById('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(blob => {
+        const formData = new FormData();
+        formData.append('photo', blob, `${name}.jpg`);
+        formData.append('name', name);
+
+        fetch('/api/register', {
+          method: 'POST',
+          body: formData
+        }).then(res => res.json())
+          .then(data => alert(data.message))
+          .catch(err => console.error(err));
+      }, 'image/jpeg');
+    }
+  </script>
+
+<script>
+  function navigateToPage(path){
+      window.location.href=path;
+  }
+</script>
+</body>
+
+</html>
