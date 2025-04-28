@@ -34,7 +34,7 @@ app.post('/api/register', upload.single('photo'), (req, res) => {
 
 app.get('/api/getUsers', (req, res) => {
   db.query('SELECT image_path FROM users', [], (err, results) => {
-    if (err || results.length === 0) return res.status(400).send('User not found');
+    if (err || results.length === 0) return res.json({message:'success', users:[]});
     res.json({ message: 'success', users:results });
   });
 });
@@ -47,7 +47,7 @@ app.post('/api/attendance', (req, res) => {
     if (err || results.length === 0) return res.status(400).send('User not found');
 
     const userId = results[0].id;
-    db.query('INSERT INTO attendance (user_id) VALUES (?)', [userId], err => {
+    db.query('INSERT INTO attendance (user_id,name) VALUES (?,?)', [userId, name], err => {
       if (err) return res.status(500).send('Attendance failed');
       res.json({ message: 'Attendance marked' });
     });

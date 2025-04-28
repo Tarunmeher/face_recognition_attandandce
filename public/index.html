@@ -13,7 +13,7 @@
 <body>
     <header>Smart Attendance System</header>
     <div class="menu">
-        <span onclick="navigateToPage('/')">Attendance List</span>
+        <!-- <span onclick="navigateToPage('/')">Attendance List</span> -->
         <span onclick="navigateToPage('/register.html')">Register New Attendee</span>
     </div>
     <div class="container">        
@@ -33,7 +33,7 @@
             </table>
         </div>
         <div id="videoConsole">
-            <video id="video" width="100%" height="560" autoplay muted></video>
+            <video id="video" width="100%" height="100%" autoplay muted></video>
             <span id="status"></span>
         </div>
     </div>
@@ -43,7 +43,7 @@
 
     <script>
         function navigateToPage(path){
-            window.location.href=path;
+            window.open(path, '_blank');
         }
     </script>
 </body>

@@ -2,63 +2,87 @@
 <html>
 
 <head>
-  <title>Register Face</title>
-  <link rel="stylesheet" href="index.css">
-  <style>
-    #video{
-      width:400px;
-      height:400px;
-      margin: auto;
+	<title>Register Face</title>
+	<link rel="stylesheet" href="index.css">
+	<style>
+		#registerConsole{
+			width:400px;
+			margin: auto;
+		}
+		#video{
+			width:400px;
+			height:400px;
+		}
+    #name{
+      padding: 5px;
+      font-size: 1.2rem;
     }
-  </style>
+    #name:focus{
+      outline: none;
+    }
+    #registerConsole button{
+      padding: 5px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      background-color: purple;
+      color: white;        
+    }
+    #registerConsole button:hover{
+          background-color: rgb(57, 1, 57);
+        }
+	</style>
 </head>
 
 <body>
-  <header>Smart Attendance System</header>
-  <div class="menu">
-    <span onclick="navigateToPage('/')">Attendance List</span>
-    <span onclick="navigateToPage('/register.html')">Register New Attendee</span>
-  </div>
-  <h2>Register User</h2>
+	<header>Smart Attendance System</header>
+	<div class="menu">
+		<!-- <span onclick="navigateToPage('/')">Attendance List</span>
+		<span onclick="navigateToPage('/register.html')">Register New Attendee</span> -->
+	</div>
+	<h2 style="text-align: center;">Register User</h2>
 
-  <video id="video" autoplay muted></video>
-  <input type="text" id="name" placeholder="Enter your name" required />
-  <button onclick="captureAndRegister()">Register</button>
-  <canvas id="canvas" style="display:none;"></canvas>
+	<div id="registerConsole">
+		<video id="video" autoplay muted></video>
+	  <div style="text-align: center;">
+      <input type="text" id="name" placeholder="Enter your name" required autocomplete="off" />
+      <button onclick="captureAndRegister()">Register</button>
+    </div>
+	  <canvas id="canvas" style="display:none;"></canvas>
+	</div>
 
-  <script>
-    const video = document.getElementById('video');
-    navigator.mediaDevices.getUserMedia({ video: {} })
-      .then(stream => video.srcObject = stream);
+	<script>
+		const video = document.getElementById('video');
+		navigator.mediaDevices.getUserMedia({ video: {} })
+			.then(stream => video.srcObject = stream);
 
-    function captureAndRegister() {
-      const name = document.getElementById('name').value;
-      if (!name) return alert("Enter a name");
+		function captureAndRegister() {
+			const name = document.getElementById('name').value;
+			if (!name) return alert("Enter name");
 
-      const canvas = document.getElementById('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+			const canvas = document.getElementById('canvas');
+			canvas.width = video.videoWidth;
+			canvas.height = video.videoHeight;
+			canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      canvas.toBlob(blob => {
-        const formData = new FormData();
-        formData.append('photo', blob, `${name}.jpg`);
-        formData.append('name', name);
+			canvas.toBlob(blob => {
+				const formData = new FormData();
+				formData.append('photo', blob, `${name}.jpg`);
+				formData.append('name', name);
 
-        fetch('/api/register', {
-          method: 'POST',
-          body: formData
-        }).then(res => res.json())
-          .then(data => alert(data.message))
-          .catch(err => console.error(err));
-      }, 'image/jpeg');
-    }
-  </script>
+				fetch('/api/register', {
+					method: 'POST',
+					body: formData
+				}).then(res => res.json())
+					.then(data => alert(data.message))
+					.catch(err => console.error(err));
+			}, 'image/jpeg');
+		}
+	</script>
 
 <script>
-  function navigateToPage(path){
-      window.location.href=path;
-  }
+	function navigateToPage(path){
+		window.location.href=path;
+	}
 </script>
 </body>
 
