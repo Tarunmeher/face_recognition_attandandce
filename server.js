@@ -54,4 +54,14 @@ app.post('/api/attendance', (req, res) => {
   });
 });
 
+app.get('/api/getAttendance/:date', (req, res) => {
+  const att_date = req.params.date;
+  console.log(att_date)
+  db.query('SELECT * FROM attendance WHERE DATE(timestamp) = ?', [att_date], (err, results) => {
+    console.log(results)
+    if (err || results.length === 0) return res.json({message:'success', data:[]});
+    res.json({ message: 'success', data:results });
+  });
+});
+
 app.listen(port, () => console.log(`Server running at http://localhost:${port}`));

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Attendance List</title>
+	<link rel="stylesheet" href="index.css">
+    <script src="jquery.min.js"></script>
+	<style>
+		#registerConsole{
+			width:400px;
+			margin: auto;
+		}
+		#video{
+			width:400px;
+			height:400px;
+		}
+    #name{
+      padding: 5px;
+      font-size: 1.2rem;
+    }
+    #name:focus{
+      outline: none;
+    }
+    #registerConsole button{
+      padding: 5px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      background-color: purple;
+      color: white;        
+    }
+    #registerConsole button:hover{
+          background-color: rgb(57, 1, 57);
+        }
+	</style>
+</head>
+
+<body>
+	<header>Smart Attendance System</header>
+	<div class="menu">
+		<span onclick="navigateToPage('/')">Attendance List</span>
+		<span onclick="navigateToPage('/register.html')">Register New Attendee</span>
+	</div>
+	<h2 style="text-align: center;">Attendance List</h2>
+    
+	<div style="width:70%;margin:auto;" id="list">        
+            <h3 style="text-align: center;">Today's Attendance</h3>
+            <input type="date" name="" id="att_date" onchange="fetchAttendance()">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#SL</th>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Joined At</th>
+                        <th>Late Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+
+	<script>
+        $(document).ready(function(){
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+            const dd = String(today.getDate()).padStart(2, '0');
+
+            const formattedToday = `${yyyy}-${mm}-${dd}`;
+            $("#att_date").val(formattedToday);
+            fetchAttendance()
+        })
+		function fetchAttendance(){
+            $("tbody").html('');
+            let selectedDate = document.getElementById('att_date').value;
+            var xhr = new XMLHttpRequest();
+	        xhr.open('GET', `/api/getAttendance/${selectedDate}`, true);
+	        xhr.setRequestHeader('Content-Type', 'application/json');
+
+	        xhr.onreadystatechange = function () {
+	        	if (xhr.readyState === 4) { // 4 means the request is done
+	        		if (xhr.status === 200) {
+	        			var data = JSON.parse(xhr.responseText);                    
+	        			if (data.message === 'success' && data.data.length) {
+                            $("tbody").html('');
+                            data.data.forEach(function(att, index){
+                                $("tbody").append(`<tr>
+                                        <td>${index+1}</td>
+                                        <td>${att.name}</td>
+                                        <td>${new Date(att.timestamp).toLocaleDateString()}</td>
+                                        <td>${new Date(att.timestamp).toLocaleTimeString()}</td>
+                                        <td>${getLateStatus(att.timestamp)}</td>
+                                    </tr>`);
+                            });
+	        			}
+	        		} else {
+	        			console.error('Error in AJAX request:', xhr.statusText);
+	        		}
+	        	}
+	        };
+        
+	        xhr.send();
+        }
+	</script>
+
+<script>
+	function navigateToPage(path){
+		window.location.href=path;
+	}
+
+    function getLateStatus(ts){
+        // Given UTC timestamp
+        const timestampUTC = new Date(ts);
+
+        // Convert to IST (UTC +5:30)
+        const IST_OFFSET = 5.5 * 60; // in minutes
+        const timestampIST = new Date(timestampUTC.getTime() + IST_OFFSET * 60 * 1000);
+
+        // Create 9:00 AM IST time on same day
+        const nineAMIST = new Date(timestampIST);
+        nineAMIST.setHours(9, 0, 0, 0);
+
+        // Compare
+        return timestampIST <= nineAMIST ? `<span style="color:green">On time</span>` : `<span style="color:red">Late</span>`;
+    }
+</script>
+</body>
+
+</html>
